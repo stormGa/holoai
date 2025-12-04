@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
+
 interface SidebarProps {
   isCollapsed: boolean;
   activeSection: string;
