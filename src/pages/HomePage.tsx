@@ -4,7 +4,7 @@ import Dashboard from '../components/Dashboard/Dashboard.tsx';
 const HomePage: React.FC = () => {
   return (
     // This page is responsible for providing the gray canvas for the dashboard cards
-    <div className="w-full bg-gray-50">
+    <div className="w-full h-full bg-gray-50">
       <Dashboard />
     </div>
   );

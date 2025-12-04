@@ -12,7 +12,7 @@ const Header: React.FC = () => {
         <input
           type="text"
           placeholder="搜索个人知识库或社区内容..."
-          className="w-full h-12 pl-11 pr-12 bg-gray-50 border border-gray-200 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+          className="w-full h-12 pl-11 pr-12 bg-gray-50 hover:bg-white focus:bg-white border border-gray-200 rounded-full focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all duration-300 ease-in-out shadow-sm hover:shadow-md"
         />
         <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
           <button className="p-1 rounded-full hover:bg-gray-100">

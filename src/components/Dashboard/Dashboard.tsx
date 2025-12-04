@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { User, Cloud, Mic, FileText, Presentation, Sparkles, TrendingUp, CirclePlay, ThumbsUp, Database, Check, Video, Library, Bot, Paperclip, Send, BarChart3, LoaderCircle, CircleCheck, Clock, Sun, Lightbulb, Code } from 'lucide-react';
+import { User, Cloud, Mic, FileText, Presentation, Sparkles, TrendingUp, CirclePlay, ThumbsUp, Database, Check, Video, Library, Bot, Paperclip, Send, BarChart3, LoaderCircle, CircleCheck, Clock, Sun, Lightbulb, Code, Square } from 'lucide-react';
 
 // A more versatile Card component
 interface CardProps {
@@ -24,7 +24,9 @@ const Dashboard: React.FC = () => {
   const userName = "Developer";
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
   const chatContentRef = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (chatContentRef.current) {
@@ -40,11 +42,24 @@ const Dashboard: React.FC = () => {
     const userMessage: Message = { id: Date.now(), sender: 'user', text: messageText };
     setMessages(prev => [...prev, userMessage]);
     if (!prompt) setInput('');
+    setIsGenerating(true);
 
-    setTimeout(() => {
-      const aiMessage: Message = { id: Date.now() + 1, sender: 'ai', text: `这是对 "${messageText}" 的一个模拟AI回复。这是一个非常长的回复，用来测试当内容超出卡片高度时，是否会出现内部滚动条，而不是将整个卡片撑开。我们需要确保这个行为是正确的，以提供良好的用户体验。` };
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+    timeoutRef.current = setTimeout(() => {
+      const aiMessage: Message = { id: Date.now() + 1, sender: 'ai', text: `这是对 "${messageText}" 的一个模拟AI回复。这是一个非常长的回复，用来测试当内容超出卡片高度时，是否会出现内部滚动条，而不是将整个卡片撑开。我们需要确保这个行为是正确的，以提供良好的用户体验。重复这段文字来增加长度。这是一个非常长的回复，用来测试当内容超出卡片高度时，是否会出现内部滚动条，而不是将整个卡片撑开。我们需要确保这个行为是正确的，以提供良好的用户体验。` };
       setMessages(prev => [...prev, aiMessage]);
-    }, 1000);
+      setIsGenerating(false);
+      timeoutRef.current = null;
+    }, 2000); // Increased delay to 2 seconds to make it easier to test stop button
+  };
+
+  const handleStopGeneration = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    setIsGenerating(false);
   };
 
   const promptStarters = [
@@ -55,19 +70,15 @@ const Dashboard: React.FC = () => {
   ];
 
   return (
-    <div className="h-full w-full bg-gradient-to-br from-gray-50 via-blue-50/30 to-indigo-50/20 p-4 md:p-6 lg:p-8 overflow-y-auto">
-      {/* Top Welcome Section */}
-      <Card variant="glass" padding="p-3 md:p-4" className="mb-6">
+    // 【修改点 1】最外层：使用 h-screen 强制占满一屏，overflow-hidden 禁止出现页面级滚动条
+    <div className="h-full w-full overflow-hidden bg-gradient-to-br from-gray-50 via-blue-50/30 to-indigo-50/20 p-4 md:p-6 lg:p-8 flex flex-col gap-6">
+
+      {/* 顶部 Header (高度固定) */}
+      <Card variant="glass" padding="p-3 md:p-4" className="flex-shrink-0">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 md:gap-6">
           <div className="flex items-center gap-4">
             <div>
-              <div className="flex items-center gap-3">
-                <h1 className="text-lg md:text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">早上好，欢迎回来</h1>
-                <div className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 rounded-full border border-amber-200/50">
-                  <Sun className="size-3.5 text-amber-500" />
-                  <span className="text-xs font-medium text-amber-700">晴朗 22°C</span>
-                </div>
-              </div>
+              <div className="flex items-center gap-3"><h1 className="text-lg md:text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">早上好，欢迎回来</h1><div className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 rounded-full border border-amber-200/50"><Sun className="size-3.5 text-amber-500" /><span className="text-xs font-medium text-amber-700">晴朗 22°C</span></div></div>
               <p className="text-xs text-gray-500 mt-1">今天也是充满活力的一天</p>
             </div>
           </div>
@@ -76,15 +87,22 @@ const Dashboard: React.FC = () => {
             <div className="w-px h-8 bg-gray-200 hidden sm:block"></div>
             <div className="flex items-center gap-3"><div className="size-9 rounded-xl bg-blue-50 flex items-center justify-center border border-blue-200"><Database size={16} className="text-blue-600" /></div><div><p className="text-xs text-gray-500">知识库</p><p className="text-sm font-semibold text-gray-900">128 篇文档</p></div></div>
             <div className="w-px h-8 bg-gray-200 hidden sm:block"></div>
-            <div className="flex items-center gap-3"><div className="size-9 rounded-xl bg-purple-50 flex items-center justify-center border border-purple-200"><Cloud size={16} className="text-purple-600" /></div><div><p className="text-xs text-gray-500">云存储空间</p><div className="flex items-center gap-2"><p className="text-sm font-semibold text-gray-900">12/50 GB</p><div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden"><div className="h-full bg-purple-600" style={{width: '24%'}}></div></div></div></div></div>
+            <div className="flex items-center gap-3"><div className="size-9 rounded-xl bg-purple-50 flex items-center justify-center border border-purple-200"><Cloud size={16} className="text-purple-600" /></div><div><p className="text-xs text-gray-500">云存储空间</p><div className="flex items-center gap-2"><p className="text-sm font-semibold text-gray-900">12/50 GB</p><div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden"><div className="h-full bg-purple-600" style={{ width: '24%' }}></div></div></div></div></div>
           </div>
         </div>
       </Card>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6" style={{height: 'calc(100% - 116px)'}}>
-        <div className="xl:col-span-2 flex flex-col">
-          <Card variant="glass" className="flex flex-col flex-1" padding="p-0">
-            <div ref={chatContentRef} className="flex-1 overflow-y-auto p-6 min-h-0">
+      {/* 【修改点 2】主内容区域：flex-1 让它占满剩余空间，min-h-0 是关键，防止子元素无限撑开 */}
+      <div className="flex-1 flex gap-6 min-h-0 overflow-hidden">
+
+        {/* 左侧列：flex flex-col h-full 确保它撑满高度 */}
+        <div className="flex-1 flex flex-col min-w-0 h-full">
+
+          {/* 【修改点 3】卡片本身：加上 h-full 和 flex flex-col，让卡片占满父容器，并管理内部布局 */}
+          <Card variant="glass" className="flex flex-col h-full" padding="p-0">
+
+            {/* 消息列表区：flex-1 overflow-y-auto 确保只有这里滚动 */}
+            <div ref={chatContentRef} className="flex-1 overflow-y-auto p-6 min-h-0 scroll-smooth">
               {messages.length === 0 ? (
                 <div className="flex flex-col justify-center items-center h-full text-center">
                   <div className="relative size-20 mb-6"><div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 animate-pulse opacity-20 blur-xl"></div><div className="relative size-20 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg"><Sparkles className="size-10 text-white" /></div></div>
@@ -111,19 +129,41 @@ const Dashboard: React.FC = () => {
                 </div>
               )}
             </div>
-            <div className="shrink-0 p-4 bg-gradient-to-t from-white/90 via-white/90 to-transparent">
+
+            {/* 底部输入框：flex-shrink-0 防止被压缩，始终固定在卡片底部 */}
+            <div className="shrink-0 p-4 bg-gradient-to-t from-white/90 via-white/90 to-transparent border-t border-gray-100">
               <div className="relative max-w-3xl mx-auto">
                 <form onSubmit={handleSendMessage}>
-                  <textarea value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(e); } }} placeholder="在这里输入您的问题..." className="w-full min-h-[56px] p-4 pl-14 pr-16 text-base rounded-2xl border-2 border-gray-200 bg-white shadow-lg focus:border-blue-500 focus:ring-4 focus:ring-blue-50 resize-none transition-all" rows={1} />
+                  <textarea value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(e); } }} placeholder="在这里输入您的问题..." className="w-full min-h-[56px] p-4 pl-14 pr-16 text-base rounded-2xl border border-gray-200 bg-white shadow-sm hover:shadow-md focus:border-blue-400 focus:ring-4 focus:ring-blue-100 outline-none resize-none transition-all duration-300 ease-in-out" rows={1} />
                   <div className="absolute top-1/2 -translate-y-1/2 left-4"><button type="button" className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"><Paperclip size={20} /></button></div>
-                  <div className="absolute top-1/2 -translate-y-1/2 right-4"><button type="submit" className="size-10 rounded-xl bg-blue-600 text-white flex items-center justify-center transition-all duration-200 shadow-md hover:bg-blue-700 disabled:bg-gray-300 disabled:shadow-none" disabled={!input.trim()}><Send size={20} /></button></div>
+                  <div className="absolute top-1/2 -translate-y-1/2 right-4">
+                    {isGenerating ? (
+                      <button
+                        type="button"
+                        onClick={handleStopGeneration}
+                        className="size-10 rounded-xl bg-red-500 text-white flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-red-500/30 hover:scale-105 active:scale-95"
+                      >
+                        <Square size={20} fill="currentColor" />
+                      </button>
+                    ) : (
+                      <button
+                        type="submit"
+                        className="size-10 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-blue-500/30 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                        disabled={!input.trim()}
+                      >
+                        <Send size={20} />
+                      </button>
+                    )}
+                  </div>
                 </form>
               </div>
             </div>
           </Card>
         </div>
-        <div className="flex flex-col gap-4 md:gap-6">
-          <Card className="bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 border border-indigo-200/50" padding="p-5"><div className="flex items-center justify-between mb-4"><h3 className="text-lg font-bold text-gray-900 flex items-center gap-2"><TrendingUp size={20} className="text-indigo-600" /> 工作流看板</h3></div><div className="space-y-3"><div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 hover:bg-white transition-all cursor-pointer group"><div className="flex items-center justify-between mb-2"><h4 className="font-semibold text-gray-900 text-sm group-hover:text-indigo-600 transition-colors">会议纪要生成</h4><span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700 flex items-center gap-1.5"><LoaderCircle size={12} className="animate-spin" />运行中</span></div><div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden"><div className="h-full bg-gradient-to-r from-blue-500 to-indigo-500" style={{width: '60%'}}></div></div></div><div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 hover:bg-white transition-all cursor-pointer group"><div className="flex items-center justify-between mb-2"><h4 className="font-semibold text-gray-900 text-sm group-hover:text-indigo-600 transition-colors">季度报告生成</h4><span className="px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 flex items-center gap-1.5"><CircleCheck size={12} />已完成</span></div></div></div></Card>
+
+        {/* 右侧边栏：加上 overflow-y-auto 允许它独立滚动 (如果内容多的话) */}
+        <div className="w-[350px] flex-shrink-0 flex flex-col gap-6 h-full overflow-y-auto hidden md:flex">
+          <Card className="bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 border border-indigo-200/50" padding="p-5"><div className="flex items-center justify-between mb-4"><h3 className="text-lg font-bold text-gray-900 flex items-center gap-2"><TrendingUp size={20} className="text-indigo-600" /> 工作流看板</h3></div><div className="space-y-3"><div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 hover:bg-white transition-all cursor-pointer group"><div className="flex items-center justify-between mb-2"><h4 className="font-semibold text-gray-900 text-sm group-hover:text-indigo-600 transition-colors">会议纪要生成</h4><span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700 flex items-center gap-1.5"><LoaderCircle size={12} className="animate-spin" />运行中</span></div><div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden"><div className="h-full bg-gradient-to-r from-blue-500 to-indigo-500" style={{ width: '60%' }}></div></div></div><div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 hover:bg-white transition-all cursor-pointer group"><div className="flex items-center justify-between mb-2"><h4 className="font-semibold text-gray-900 text-sm group-hover:text-indigo-600 transition-colors">季度报告生成</h4><span className="px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 flex items-center gap-1.5"><CircleCheck size={12} />已完成</span></div></div></div></Card>
           <Card variant="glass" padding="p-5"><h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"><Sparkles size={20} className="text-blue-600" /> AI 创作启动器</h3><div className="grid grid-cols-2 gap-3"><a href="#" className="group bg-purple-50 hover:bg-purple-100 rounded-xl p-4 border-2 border-transparent hover:border-current hover:shadow-md transition-all"><div className="size-12 rounded-xl bg-purple-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-md"><FileText size={24} className="text-white" /></div><h4 className="font-semibold text-gray-900 text-sm">AI 智能报告</h4></a><a href="#" className="group bg-blue-50 hover:bg-blue-100 rounded-xl p-4 border-2 border-transparent hover:border-current hover:shadow-md transition-all"><div className="size-12 rounded-xl bg-blue-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-md"><Presentation size={24} className="text-white" /></div><h4 className="font-semibold text-gray-900 text-sm">AI PPT 生成</h4></a></div></Card>
         </div>
       </div>

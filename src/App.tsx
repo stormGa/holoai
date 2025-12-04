@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage.tsx';
 import ChatPage from './pages/ChatPage.tsx';
 import KnowledgePage from './pages/KnowledgePage.tsx';
 import CommunityPage from './pages/CommunityPage.tsx';
+import TrustedSearchPage from './pages/TrustedSearchPage.tsx';
 
 const Placeholder = ({ title }: { title: string }) => (
   <div className="p-8 bg-white h-full">
@@ -30,10 +31,12 @@ function App() {
   };
 
   const activeComponent = useMemo(() => {
-    const [mainSection] = activeSection.split('-');
+    const [mainSection, subSection] = activeSection.split('-');
     switch (mainSection) {
       case 'home': return <HomePage />;
-      case 'chat': return <ChatPage />;
+      case 'interaction':
+        if (subSection === 'search') return <TrustedSearchPage />;
+        return <ChatPage />;
       case 'knowledge': return <KnowledgePage />;
       case 'community': return <CommunityPage />;
       case 'tools': return <Placeholder title="AI 工具" />;
@@ -52,12 +55,12 @@ function App() {
         // The width of the sensor area includes the sidebar and the gap
         style={{ width: (isCollapsed ? COLLAPSED_WIDTH : SIDEBAR_WIDTH) + GAP }}
       >
-        <Sidebar 
+        <Sidebar
           isCollapsed={isCollapsed}
-          activeSection={activeSection} 
+          activeSection={activeSection}
           onSectionChange={handleSectionChange}
         />
-        
+
         <CollapseButton
           isCollapsed={isCollapsed}
           isSidebarHovered={isSidebarHovered}
@@ -68,12 +71,12 @@ function App() {
       </div>
 
       {/* Main Panel with a dynamic margin that includes the gap */}
-      <div 
+      <div
         className="flex flex-col h-screen transition-all duration-300 ease-soft-ease"
         style={{ marginLeft: (isCollapsed ? COLLAPSED_WIDTH : SIDEBAR_WIDTH) + GAP }}
       >
         <Header />
-        
+
         <main className="flex-1 overflow-y-auto">
           {activeComponent}
         </main>
