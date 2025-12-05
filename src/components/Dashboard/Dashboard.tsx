@@ -134,7 +134,7 @@ const Dashboard: React.FC = () => {
             <div className="shrink-0 p-4 bg-gradient-to-t from-white/90 via-white/90 to-transparent border-t border-gray-100">
               <div className="relative max-w-3xl mx-auto">
                 <form onSubmit={handleSendMessage}>
-                  <textarea value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(e); } }} placeholder="在这里输入您的问题..." className="w-full min-h-[56px] p-4 pl-14 pr-16 text-base rounded-2xl border border-gray-200 bg-white shadow-sm hover:shadow-md focus:border-blue-400 focus:ring-4 focus:ring-blue-100 outline-none resize-none transition-all duration-300 ease-in-out" rows={1} />
+                  <textarea value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(e); } }} placeholder={isGenerating ? "AI正在思考中..." : "在这里输入您的问题..."} disabled={isGenerating} className={`w-full min-h-[56px] p-4 pl-14 pr-16 text-base rounded-2xl border border-gray-200 bg-white shadow-sm focus:border-blue-400 focus:ring-4 focus:ring-blue-100 outline-none resize-none transition-all duration-300 ease-in-out ${isGenerating ? 'bg-gray-50 cursor-not-allowed text-gray-400' : 'hover:shadow-md'}`} rows={1} />
                   <div className="absolute top-1/2 -translate-y-1/2 left-4"><button type="button" className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"><Paperclip size={20} /></button></div>
                   <div className="absolute top-1/2 -translate-y-1/2 right-4">
                     {isGenerating ? (
