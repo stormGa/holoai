@@ -43,72 +43,7 @@ const TagsView = () => {
                     </div>
                 </div>
 
-                <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 space-y-4">
-                    {topics.map(topic => (
-                        <div key={topic.id} className="break-inside-avoid relative group cursor-pointer">
-                            <div className="absolute inset-0 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-2xl shadow-sm border border-white/50 dark:border-white/5 transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-md dark:group-hover:shadow-black/20 group-hover:border-blue-200/50 dark:group-hover:border-blue-500/20"></div>
-                            <div className="relative p-5 flex flex-col h-full bg-gradient-to-br from-white/80 to-transparent dark:from-slate-800/80 dark:to-transparent rounded-2xl">
 
-                                <div className="flex items-start justify-between mb-3">
-                                    <div className="size-8 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-sm" style={{ backgroundColor: topic.color }}>
-                                        {topic.label.substring(0, 1).toUpperCase()}
-                                    </div>
-                                    {/* Visual Indicator of "Heat" */}
-                                    <div className={`size-2 rounded-full ${topic.count > 100 ? 'bg-red-500 animate-pulse' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
-                                </div>
-
-                                <div className="mt-auto">
-                                    <h3 className="font-bold text-gray-800 dark:text-gray-100 text-[15px]">{topic.label}</h3>
-                                    <div className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-gray-400 inline-block mt-1">
-                                        {topic.count} 个知识点
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
-                <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 space-y-4 mt-4">
-                    {/* Separate Logic for Detail Rendering in Masonry to match design spec */}
-                    {topics.map(topic => (
-                        <div key={`detail-${topic.id}`} className="hidden">
-                            {/* This block is just to keep the compilation clean, actual masonry needs better integration or library */}
-                        </div>
-                    ))}
-                    {/* Re-rendering for proper masonry with details if needed, 
-                    but for now sticking to the card view above as primary. 
-                    Let's update the card above to include the details directly for density. 
-                */}
-                </div>
-                {/* 
-              Correcting the loop above to include the details inside the card directly for true high density 
-           */}
-                <div className="hidden"></div> {/* Placeholder to clean up syntax if needed */}
-
-                {/* Actual Grid Rerender for Correct Layout */}
-                <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
-                    {topics.map(topic => (
-                        <div key={`real-${topic.id}`} className="break-inside-avoid group relative cursor-pointer">
-                            <div className="absolute inset-0 bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-lg dark:group-hover:shadow-black/20 group-hover:border-blue-200 dark:group-hover:border-blue-900/30"></div>
-
-                            <div className="relative p-4 z-10">
-                                <div className="flex items-center justify-between mb-3">
-                                    <span className="inline-flex items-center justify-center size-8 rounded-lg text-white font-bold shadow-sm" style={{ backgroundColor: topic.color }}>
-                                        {topic.label.substring(0, 1)}
-                                    </span>
-                                    <span className="text-[10px] bg-gray-50 dark:bg-slate-800 text-gray-400 dark:text-gray-500 px-1.5 py-0.5 rounded border border-gray-100 dark:border-slate-700">#{topic.id}</span>
-                                </div>
-
-                                <div className="mb-4">
-                                    <h3 className="font-bold text-gray-800 dark:text-white text-[15px]">{topic.label}</h3>
-                                    <div className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-gray-400 inline-block mt-1">
-                                        {topic.count} 个知识点
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
 
                 <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-5 space-y-5">
                     {topics.map(topic => (

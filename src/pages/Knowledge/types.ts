@@ -36,9 +36,12 @@ export interface GraphNode {
     y: number;
     r: number;
     label: string;
-    group: 'hub' | 'tech' | 'design' | 'finance';
+    group: string;
     color: string;
     description: string;
+    avatar?: string;
+    vx?: number;
+    vy?: number;
 }
 
 export interface GraphLink {

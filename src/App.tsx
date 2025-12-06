@@ -6,6 +6,7 @@ import Header from './components/Header/Header.tsx';
 import HomePage from './pages/HomePage.tsx';
 import ChatPage from './pages/Interaction/ChatPage.tsx';
 import TrustedSearchPage from './pages/Interaction/TrustedSearchPage.tsx';
+import MemoryPage from './pages/Memory/MemoryPage.tsx';
 
 // Community Pages (TCC)
 import MainCommunityView from './pages/Community/MainCommunityView.tsx';
@@ -49,7 +50,11 @@ const AppLayout = () => {
 
   const getActiveSection = (path: string) => {
     if (path === '/') return 'home';
-    if (path.startsWith('/knowledge')) return 'knowledge';
+    if (path.startsWith('/memory')) return 'memory';
+    if (path.startsWith('/knowledge/graph')) return 'knowledge-graph';
+    if (path.startsWith('/knowledge/tags')) return 'knowledge-tags';
+    if (path.startsWith('/knowledge/pending')) return 'knowledge-pending';
+    if (path.startsWith('/knowledge')) return 'knowledge-sources'; // Default or specific source path
     if (path.startsWith('/interaction')) return 'interaction';
     if (path.startsWith('/community')) return 'community';
     if (path.startsWith('/tools/favorites')) return 'tools-favorites';
@@ -106,6 +111,7 @@ const AppLayout = () => {
             <Route path="/home" element={<Navigate to="/" replace />} />
 
             {/* Interaction */}
+            <Route path="/memory" element={<MemoryPage />} />
             <Route path="/interaction/chat" element={<ChatPage />} />
             <Route path="/interaction/search" element={<TrustedSearchPage />} />
 

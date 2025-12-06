@@ -1,4 +1,4 @@
-import { Home, MessageSquare, Users, Library, Sparkles, Wrench, Settings, ChevronDown, Zap, FolderUp, Tag, Network, Loader, TrendingUp, UserPlus, Lightbulb, FileText, Languages, BarChart3, Star, User, Shield, Palette, Bell, Puzzle, Briefcase, Mail, Sun, Moon } from 'lucide-react';
+import { Home, MessageSquare, Users, Library, Sparkles, Wrench, Settings, ChevronDown, Zap, FolderUp, Tag, Network, Loader, TrendingUp, UserPlus, Lightbulb, FileText, Languages, BarChart3, Star, User, Shield, Palette, Bell, Puzzle, Briefcase, Mail, Sun, Moon, Aperture } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext.tsx';
@@ -23,6 +23,7 @@ interface NavItem {
 
 const baseNavItems: NavItem[] = [
   { id: 'home', icon: Home, label: '工作台', color: '#2D7FFD' },
+  { id: 'memory', icon: Aperture, label: '全息记忆', color: '#EC4899' },
   {
     id: 'interaction', icon: MessageSquare, label: '智能交互', color: '#14B8A6', subItems: [
       { id: 'interaction-chat', label: 'AI 对话', icon: Zap },
@@ -33,7 +34,7 @@ const baseNavItems: NavItem[] = [
     id: 'knowledge', icon: Library, label: '知识库', color: '#8B5CF6', subItems: [
       { id: 'knowledge-sources', label: '我的知识源', icon: FolderUp },
       { id: 'knowledge-tags', label: '智能分类', icon: Tag },
-      { id: 'knowledge-graph', label: '知识图谱', icon: Network },
+      { id: 'knowledge-graph', label: '社交图谱', icon: Users },
       { id: 'knowledge-pending', label: '待学习内容', icon: Loader },
     ]
   },
@@ -109,6 +110,7 @@ export function Sidebar({ isCollapsed, activeSection }: SidebarProps) {
     let path = '/';
     const parts = id.split('-');
     if (id === 'home') path = '/';
+    else if (id === 'memory') path = '/memory';
     else if (parts.length === 2 && parts[0] !== 'tools') path = `/${parts[0]}/${parts[1]}`;
     else if (id.startsWith('tools-')) {
       if (id === 'tools-favorites') path = '/tools/favorites';
