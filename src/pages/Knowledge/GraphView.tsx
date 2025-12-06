@@ -35,38 +35,38 @@ const GraphView = () => {
     }, []);
 
     return (
-        <div className="h-[calc(100vh-140px)] w-full bg-white rounded-3xl shadow-sm overflow-hidden relative group border border-gray-100 m-8 mr-8">
-            {/* Animated Background Mesh (Light) */}
-            <div className="absolute inset-0 opacity-40 pointer-events-none" style={{
-                backgroundImage: `radial-gradient(circle at 1px 1px, #E2E8F0 1px, transparent 0)`,
+        <div className="h-[calc(100vh-140px)] w-full bg-white dark:bg-slate-950 rounded-3xl shadow-sm overflow-hidden relative group border border-gray-100 dark:border-slate-800 m-8 mr-8 transition-colors duration-300">
+            {/* Animated Background Mesh */}
+            <div className="absolute inset-0 opacity-40 dark:opacity-20 pointer-events-none" style={{
+                backgroundImage: `radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)`,
                 backgroundSize: '40px 40px'
             }}></div>
-            <div className="absolute inset-0 bg-gradient-to-tr from-white via-transparent to-blue-50/30 pointer-events-none"></div>
+            <div className="absolute inset-0 bg-gradient-to-tr from-white via-transparent to-blue-50/30 dark:from-slate-950 dark:to-blue-900/10 pointer-events-none transition-colors duration-300"></div>
 
             {/* Info Overlay */}
             <div className="absolute top-6 left-6 z-10 pointer-events-none">
                 <div className="flex items-center gap-2 mb-1">
                     <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
-                    <h2 className="text-2xl font-bold text-gray-800 tracking-tight">全息神经网络</h2>
+                    <h2 className="text-2xl font-bold text-gray-800 dark:text-white tracking-tight">全息神经网络</h2>
                 </div>
-                <p className="text-gray-400 text-sm max-w-xs font-light">
-                    Deep Space Visualization v2.0 (Light)
+                <p className="text-gray-400 dark:text-gray-500 text-sm max-w-xs font-light">
+                    Deep Space Visualization v2.0
                 </p>
             </div>
 
             {/* Ambient Controls */}
             <div className="absolute bottom-6 right-6 z-10 flex gap-2">
-                <button className="p-2.5 bg-white/80 backdrop-blur-md border border-gray-200 rounded-full text-gray-400 hover:text-blue-500 hover:border-blue-200 transition-all shadow-sm hover:shadow-md"><Share2 size={18} /></button>
-                <button className="p-2.5 bg-white/80 backdrop-blur-md border border-gray-200 rounded-full text-gray-400 hover:text-blue-500 hover:border-blue-200 transition-all shadow-sm hover:shadow-md"><Maximize2 size={18} /></button>
+                <button className="p-2.5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-gray-200 dark:border-slate-800 rounded-full text-gray-400 dark:text-gray-500 hover:text-blue-500 hover:border-blue-200 dark:hover:border-blue-700 transition-all shadow-sm hover:shadow-md"><Share2 size={18} /></button>
+                <button className="p-2.5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-gray-200 dark:border-slate-800 rounded-full text-gray-400 dark:text-gray-500 hover:text-blue-500 hover:border-blue-200 dark:hover:border-blue-700 transition-all shadow-sm hover:shadow-md"><Maximize2 size={18} /></button>
             </div>
 
             {/* SVG Graph */}
-            <svg className="w-full h-full cursor-magnify active:cursor-grabbing relative z-0">
+            <svg className="w-full h-full cursor-magnify active:cursor-grabbing relative z-0 text-slate-200 dark:text-slate-800">
                 <defs>
                     <radialGradient id="hubCore" cx="0.5" cy="0.5" r="0.5">
                         <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.8" />
                         <stop offset="60%" stopColor="#0EA5E9" stopOpacity="0.2" />
-                        <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+                        <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
                     </radialGradient>
                     <radialGradient id="nodeGlow" cx="0.5" cy="0.5" r="0.5">
                         <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.15" />
@@ -95,11 +95,11 @@ const GraphView = () => {
                         <line
                             key={i}
                             x1={s.x} y1={s.y} x2={t.x} y2={t.y}
-                            stroke={isConnected ? "url(#linkHolo)" : "#E2E8F0"}
+                            stroke={isConnected ? "url(#linkHolo)" : "currentColor"}
                             strokeOpacity={isDimmed ? 0.1 : (isConnected ? 1 : 1)}
                             strokeWidth={isConnected ? 3 : 1.5}
                             strokeLinecap="round"
-                            className="transition-all duration-500 ease-out"
+                            className="transition-all duration-500 ease-out text-slate-200 dark:text-slate-700"
                         />
                     );
                 })}
@@ -137,11 +137,11 @@ const GraphView = () => {
                             {/* Node Body (Glass) */}
                             <circle
                                 cx={node.x} cy={node.y} r={node.r}
-                                fill="white"
+                                fill="currentColor" // Using currentColor to inherit from class
                                 fillOpacity="0.9"
                                 stroke={isHovered ? '#3B82F6' : node.color}
                                 strokeWidth={isHovered ? 3 : 2}
-                                className="shadow-sm transition-colors duration-300"
+                                className="shadow-sm transition-colors duration-300 text-white dark:text-slate-900"
                             />
 
                             {/* Inner Core */}
@@ -151,10 +151,10 @@ const GraphView = () => {
                             <text
                                 x={node.x} y={node.y + node.r + 28}
                                 textAnchor="middle"
-                                fill={isHovered ? '#1E293B' : '#64748B'}
+                                fill="currentColor"
                                 fontSize={13}
                                 fontWeight={isHovered ? '700' : '500'}
-                                className="pointer-events-none select-none tracking-wide transition-all duration-300 drop-shadow-sm bg-white/50"
+                                className={`pointer-events-none select-none tracking-wide transition-all duration-300 drop-shadow-sm ${isHovered ? 'text-slate-800 dark:text-white' : 'text-slate-500 dark:text-slate-400'}`}
                             >
                                 {node.label}
                             </text>
@@ -162,10 +162,10 @@ const GraphView = () => {
                             {/* Tooltip (Light Holo Style) */}
                             {isHovered && (
                                 <foreignObject x={node.x + node.r + 15} y={node.y - 30} width="180" height="80" className="overflow-visible z-50 pointer-events-none">
-                                    <div className="bg-white/95 backdrop-blur-xl border border-blue-100 text-slate-600 p-3 rounded-xl shadow-xl shadow-blue-500/10">
+                                    <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-blue-100 dark:border-slate-700 text-slate-600 dark:text-slate-300 p-3 rounded-xl shadow-xl shadow-blue-500/10 dark:shadow-black/20">
                                         <div className="text-xs text-blue-500 font-bold mb-1 uppercase tracking-wider">{node.group.toUpperCase()}</div>
-                                        <div className="font-bold text-gray-800 mb-1">{node.label}</div>
-                                        <div className="text-[10px] text-slate-400 leading-tight">{node.description}</div>
+                                        <div className="font-bold text-gray-800 dark:text-white mb-1">{node.label}</div>
+                                        <div className="text-[10px] text-slate-400 dark:text-slate-500 leading-tight">{node.description}</div>
                                     </div>
                                 </foreignObject>
                             )}

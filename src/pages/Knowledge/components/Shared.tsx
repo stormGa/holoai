@@ -195,9 +195,9 @@ export const ContentCard = ({ item }: { item: KnowledgeItem }) => (
 );
 
 export const ViewContainer = ({ title, children, action }: { title: string; children: React.ReactNode; action?: React.ReactNode }) => (
-    <div className="flex flex-col h-full bg-[#F8F9FA]">
-        <div className="px-8 py-6 flex justify-between items-center sticky top-0 bg-[#F8F9FA]/90 backdrop-blur-sm z-20">
-            <h1 className="text-2xl font-bold text-[#202124] tracking-tight">{title}</h1>
+    <div className="flex flex-col h-full bg-[#F8F9FA] dark:bg-slate-950 transition-colors duration-300">
+        <div className="px-8 py-6 flex justify-between items-center sticky top-0 bg-[#F8F9FA]/90 dark:bg-slate-950/90 backdrop-blur-sm z-20">
+            <h1 className="text-2xl font-bold text-[#202124] dark:text-white tracking-tight">{title}</h1>
             {action}
         </div>
         <div className="flex-1 overflow-y-auto px-8 pb-8 scrollbar-hide">
