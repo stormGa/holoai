@@ -13,6 +13,7 @@ import MainCommunityView from './pages/Community/MainCommunityView.tsx';
 import CommunityDirectory from './pages/Community/CommunityDirectory.tsx';
 import SubCommunityView from './pages/Community/SubCommunityView.tsx';
 import FollowingPage from './pages/Community/FollowingPage.tsx';
+import CreatePostPage from './pages/Community/CreatePostPage.tsx';
 
 // Tools Pages
 import ProductivityPage from './pages/Tools/ProductivityPage.tsx';
@@ -43,38 +44,44 @@ const SIDEBAR_WIDTH = 288;
 const COLLAPSED_WIDTH = 72;
 const GAP = 24;
 
+// Import WelcomePage
+import WelcomePage from './pages/Welcome/WelcomePage.tsx';
+
 const AppLayout = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isSidebarHovered, setIsSidebarHovered] = useState(false);
   const location = useLocation();
 
   const getActiveSection = (path: string) => {
-    if (path === '/') return 'home';
-    if (path.startsWith('/memory')) return 'memory';
-    if (path.startsWith('/knowledge/graph')) return 'knowledge-graph';
-    if (path.startsWith('/knowledge/tags')) return 'knowledge-tags';
-    if (path.startsWith('/knowledge/pending')) return 'knowledge-pending';
-    if (path.startsWith('/knowledge')) return 'knowledge-sources'; // Default or specific source path
-    if (path.startsWith('/interaction')) return 'interaction';
-    if (path.startsWith('/community')) return 'community';
-    if (path.startsWith('/tools/favorites')) return 'tools-favorites';
-    if (path.startsWith('/tools/productivity/meeting-notes')) return 'tools-productivity-meeting';
-    if (path.startsWith('/tools/productivity/okr')) return 'tools-productivity-okr';
-    if (path.startsWith('/tools/productivity/email-polisher')) return 'tools-productivity-email';
-    if (path.startsWith('/tools/productivity')) return 'tools-productivity';
-    if (path.startsWith('/tools/text/translator')) return 'tools-text-translator';
-    if (path.startsWith('/tools/text')) return 'tools-text';
-    if (path.startsWith('/tools/analysis/trend-analyzer')) return 'tools-analysis-trend';
-    if (path.startsWith('/tools/analysis/chart-builder')) return 'tools-analysis-chart';
-    if (path.startsWith('/tools/analysis')) return 'tools-analysis';
+    // Remove /platform prefix for matching
+    const p = path.replace(/^\/platform/, '') || '/';
 
-    if (path.startsWith('/settings/account')) return 'settings-account';
-    if (path.startsWith('/settings/privacy')) return 'settings-privacy';
-    if (path.startsWith('/settings/theme')) return 'settings-theme';
-    if (path.startsWith('/settings/notifications')) return 'settings-notifications';
-    if (path.startsWith('/settings')) return 'settings';
+    if (p === '/' || p === '') return 'home';
+    if (p.startsWith('/memory')) return 'memory';
+    if (p.startsWith('/knowledge/graph')) return 'knowledge-graph';
+    if (p.startsWith('/knowledge/tags')) return 'knowledge-tags';
+    if (p.startsWith('/knowledge/pending')) return 'knowledge-pending';
+    if (p.startsWith('/knowledge')) return 'knowledge-sources';
+    if (p.startsWith('/interaction')) return 'interaction';
+    if (p.startsWith('/community')) return 'community';
+    if (p.startsWith('/tools/favorites')) return 'tools-favorites';
+    if (p.startsWith('/tools/productivity/meeting-notes')) return 'tools-productivity-meeting';
+    if (p.startsWith('/tools/productivity/okr')) return 'tools-productivity-okr';
+    if (p.startsWith('/tools/productivity/email-polisher')) return 'tools-productivity-email';
+    if (p.startsWith('/tools/productivity')) return 'tools-productivity';
+    if (p.startsWith('/tools/text/translator')) return 'tools-text-translator';
+    if (p.startsWith('/tools/text')) return 'tools-text';
+    if (p.startsWith('/tools/analysis/trend-analyzer')) return 'tools-analysis-trend';
+    if (p.startsWith('/tools/analysis/chart-builder')) return 'tools-analysis-chart';
+    if (p.startsWith('/tools/analysis')) return 'tools-analysis';
 
-    return path.substring(1);
+    if (p.startsWith('/settings/account')) return 'settings-account';
+    if (p.startsWith('/settings/privacy')) return 'settings-privacy';
+    if (p.startsWith('/settings/theme')) return 'settings-theme';
+    if (p.startsWith('/settings/notifications')) return 'settings-notifications';
+    if (p.startsWith('/settings')) return 'settings';
+
+    return p.substring(1);
   };
 
   return (
@@ -108,7 +115,7 @@ const AppLayout = () => {
         <main className="flex-1 overflow-y-auto">
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/home" element={<Navigate to="/" replace />} />
+            <Route path="/home" element={<Navigate to="/platform" replace />} />
 
             {/* Interaction */}
             <Route path="/memory" element={<MemoryPage />} />
@@ -116,21 +123,22 @@ const AppLayout = () => {
             <Route path="/interaction/search" element={<TrustedSearchPage />} />
 
             {/* Knowledge Base */}
-            <Route path="/knowledge" element={<Navigate to="/knowledge/sources" replace />} />
+            <Route path="/knowledge" element={<Navigate to="/platform/knowledge/sources" replace />} />
             <Route path="/knowledge/sources" element={<SourcesView />} />
             <Route path="/knowledge/tags" element={<TagsView />} />
             <Route path="/knowledge/graph" element={<GraphView />} />
             <Route path="/knowledge/pending" element={<PendingView />} />
 
             {/* Community (TCC) */}
-            <Route path="/community" element={<Navigate to="/community/main" replace />} />
+            <Route path="/community" element={<Navigate to="/platform/community/main" replace />} />
             <Route path="/community/main" element={<MainCommunityView />} />
+            <Route path="/community/create" element={<CreatePostPage />} />
             <Route path="/community/explore" element={<CommunityDirectory />} />
             <Route path="/community/following" element={<FollowingPage />} />
             <Route path="/community/sub/:id" element={<SubCommunityView />} />
 
             {/* Tools */}
-            <Route path="/tools" element={<Navigate to="/tools/productivity" replace />} />
+            <Route path="/tools" element={<Navigate to="/platform/tools/productivity" replace />} />
             <Route path="/tools/productivity" element={<ProductivityPage />} />
             <Route path="/tools/productivity/meeting-notes" element={<MeetingNotesPage />} />
             <Route path="/tools/productivity/okr" element={<OKRGeneratorPage />} />
@@ -143,13 +151,13 @@ const AppLayout = () => {
             <Route path="/tools/analysis/chart-builder" element={<ChartBuilderPage />} />
 
             {/* Settings */}
-            <Route path="/settings" element={<Navigate to="/settings/account" replace />} />
+            <Route path="/settings" element={<Navigate to="/platform/settings/account" replace />} />
             <Route path="/settings/account" element={<AccountPage />} />
             <Route path="/settings/privacy" element={<PrivacyPage />} />
             <Route path="/settings/theme" element={<ThemePage />} />
             <Route path="/settings/notifications" element={<NotificationsPage />} />
 
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Navigate to="/platform" replace />} />
           </Routes>
         </main>
       </div>
@@ -159,14 +167,54 @@ const AppLayout = () => {
 
 import { ThemeProvider } from './context/ThemeContext.tsx';
 
+import { UserProvider, useUser } from './context/UserContext.tsx';
+
+// Protected Route Wrapper
+const RequireAuth = ({ children }: { children: JSX.Element }) => {
+  const { currentUser, isLoading } = useUser();
+  const location = useLocation();
+
+  if (isLoading) {
+    // Or a spinner
+    return <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-950">
+      <div className="size-8 rounded-full border-4 border-blue-500 border-t-transparent animate-spin"></div>
+    </div>;
+  }
+
+  if (!currentUser) {
+    // Redirect them to the / page, but save the current location they were testing
+    // to send them along to that page after they login, which makes for a nicer user experience
+    // For now just /
+    return <Navigate to="/" replace state={{ from: location }} />;
+  }
+
+  return children;
+};
+
+
 function App() {
   return (
     <BrowserRouter>
       <ThemeProvider>
-        <AppLayout />
+        <UserProvider>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<WelcomePage />} />
+
+            {/* Protected Routes (Platform) */}
+            <Route path="/platform/*" element={
+              <RequireAuth>
+                <AppLayout />
+              </RequireAuth>
+            } />
+
+            {/* Redirect unknown routes to home */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </UserProvider>
       </ThemeProvider>
     </BrowserRouter>
   );
-}
+};
 
 export default App;

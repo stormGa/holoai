@@ -89,7 +89,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
                         {event.type === 'video' && event.metadata.people && event.metadata.people.length > 0 && (
                             <div className="flex items-center gap-1.5">
                                 <Users size={14} />
-                                <span>{event.metadata.people.join(', ')}</span>
+                                <span>{event.metadata.people.map(p => p.name).join(', ')}</span>
                             </div>
                         )}
                         {event.metadata.description && (

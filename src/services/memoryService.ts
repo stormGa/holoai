@@ -1,5 +1,11 @@
 import { Video, FileText, MessageSquare, MapPin, Users, Clock } from 'lucide-react';
 
+export interface MemoryParticipant {
+    name: string;
+    avatar: string;
+    id?: string;
+}
+
 export interface MemoryEvent {
     id: string;
     type: 'video' | 'doc' | 'chat';
@@ -10,7 +16,7 @@ export interface MemoryEvent {
     metadata: {
         duration?: string;
         location?: string;
-        people?: string[];
+        people?: MemoryParticipant[];
         fileType?: string;
         description?: string;
     };
@@ -34,7 +40,16 @@ const generateMockMemories = (): MemoryEvent[] => {
             title: '产品战略会议',
             summary: '讨论 Q4 路线图及全息记忆 (HoloMemory) 功能范围。',
             tags: ['工作', '会议', '产品'],
-            metadata: { duration: '45:20', location: 'B 会议室', people: ['Alice', 'Bob'], description: '通过全息眼镜录制' }
+            metadata: {
+                duration: '45:20',
+                location: 'B 会议室',
+                people: [
+                    { name: 'Alice', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Alice', id: 'p1' },
+                    { name: 'Bob', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Bob', id: 'p2' },
+                    { name: 'Charlie', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie', id: 'p3' }
+                ],
+                description: '通过全息眼镜录制'
+            }
         },
         {
             id: 'm-today-2',
@@ -63,7 +78,15 @@ const generateMockMemories = (): MemoryEvent[] => {
             title: '周会回顾',
             summary: '回顾上周开发进度与下周计划。',
             tags: ['工作', '周会'],
-            metadata: { duration: '30:00', location: '线上会议', people: ['Team'], description: '录屏存档' }
+            metadata: {
+                duration: '30:00',
+                location: '线上会议',
+                people: [
+                    { name: 'Team', avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=Team' },
+                    { name: 'David', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=David' }
+                ],
+                description: '录屏存档'
+            }
         },
         // Last Month (1 item)
         {

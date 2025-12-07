@@ -28,7 +28,7 @@ export const MemorySidebar: React.FC = () => {
             {/* Widget: Social Graph (People) */}
             <div
                 className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-200 dark:border-slate-800 p-4 shadow-sm cursor-pointer hover:shadow-md transition-all group"
-                onClick={() => navigate('/knowledge/graph')}
+                onClick={() => navigate('/platform/knowledge/graph')}
             >
                 <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">

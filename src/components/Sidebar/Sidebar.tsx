@@ -1,4 +1,4 @@
-import { Home, MessageSquare, Users, Library, Sparkles, Wrench, Settings, ChevronDown, Zap, FolderUp, Tag, Network, Loader, TrendingUp, UserPlus, Lightbulb, FileText, Languages, BarChart3, Star, User, Shield, Palette, Bell, Puzzle, Briefcase, Mail, Sun, Moon, Aperture } from 'lucide-react';
+import { Home, MessageSquare, Users, Library, Sparkles, Wrench, Settings, ChevronDown, Zap, FolderUp, Tag, Network, Loader, TrendingUp, UserPlus, Lightbulb, FileText, Languages, BarChart3, Star, User, Shield, Palette, Bell, Puzzle, Briefcase, Mail, Sun, Moon, Aperture, Hash, Compass, LayoutGrid, PenTool } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext.tsx';
@@ -22,7 +22,7 @@ interface NavItem {
 }
 
 const baseNavItems: NavItem[] = [
-  { id: 'home', icon: Home, label: '工作台', color: '#2D7FFD' },
+  { id: 'home', icon: Home, label: '全息概览', color: '#2D7FFD' },
   { id: 'memory', icon: Aperture, label: '全息记忆', color: '#EC4899' },
   {
     id: 'interaction', icon: MessageSquare, label: '智能交互', color: '#14B8A6', subItems: [
@@ -39,9 +39,10 @@ const baseNavItems: NavItem[] = [
     ]
   },
   {
-    id: 'community', icon: Users, label: '可信内容社区', color: '#F59E0B', subItems: [
-      { id: 'community-main', label: 'TCC 主社区', icon: Shield },
-      { id: 'community-explore', label: '发现子社区', icon: TrendingUp },
+    id: 'community', icon: Users, label: '全息社区', color: '#F59E0B', subItems: [
+      { id: 'community-main', label: '全息广场', icon: LayoutGrid },
+      { id: 'community-create', label: '全息创作', icon: PenTool },
+      { id: 'community-explore', label: '发现周边', icon: Compass },
       { id: 'community-following', label: '我的关注', icon: UserPlus },
     ]
   },
@@ -67,37 +68,58 @@ export function Sidebar({ isCollapsed, activeSection }: SidebarProps) {
   const navigate = useNavigate();
   const [expandedMenus, setExpandedMenus] = useState<string[]>(['interaction', 'knowledge', 'community', 'tools', 'settings']);
   const [navItems, setNavItems] = useState<NavItem[]>(baseNavItems);
+  const [followedCommunities, setFollowedCommunities] = useState<any[]>([]);
 
-  const loadFavorites = () => {
-    try {
-      const saved = localStorage.getItem('tool_favorites');
-      if (saved) {
-        const favorites = JSON.parse(saved);
-        setNavItems(prev => {
-          const newItems = [...prev];
-          const toolsIdx = newItems.findIndex(i => i.id === 'tools');
-          if (toolsIdx !== -1) {
-            const baseSub = baseNavItems.find(i => i.id === 'tools')?.subItems || [];
-            const favSub = favorites.map((fav: any) => ({ id: fav.id, label: fav.name, icon: Puzzle }));
-            newItems[toolsIdx] = {
-              ...newItems[toolsIdx],
-              subItems: [...baseSub, ...(favSub.length ? [{ id: 'divider', label: '我的收藏', icon: Star } as any] : []), ...favSub],
-            };
-          }
-          return newItems;
-        });
-      }
-    } catch (e) {
-      console.error('Failed to load favorites', e);
+  // Simulate loading mock followed communities if any
+  const loadDynamicItems = () => {
+    // 1. Load Tool Favorites
+    let newItems = [...baseNavItems];
+
+    // 2. Load Followed Communities (Mock Logic via Event/State)
+    // In a real app we'd fetch from API. Here we use a local check or event listener result.
+    const comIdx = newItems.findIndex(i => i.id === 'community');
+    if (comIdx !== -1 && followedCommunities.length > 0) {
+      const baseSub = baseNavItems.find(i => i.id === 'community')?.subItems || [];
+      const followedSub = followedCommunities.map(c => ({
+        id: `community-${c.id}`,
+        label: c.name,
+        icon: Hash // Use Hash # icon for interest communities
+      }));
+
+      newItems[comIdx] = {
+        ...newItems[comIdx],
+        subItems: [...baseSub, { id: 'divider-com', label: '我的关注', icon: Star } as any, ...followedSub]
+      };
     }
+
+    setNavItems(newItems);
   };
 
   useEffect(() => {
-    loadFavorites();
-    const handler = () => loadFavorites();
-    window.addEventListener('favoritesUpdated', handler);
-    return () => window.removeEventListener('favoritesUpdated', handler);
-  }, []);
+    loadDynamicItems();
+
+    // Listen for follow events from CommunityDirectory
+    const handleFollow = (e: any) => {
+      const { id, followed } = e.detail;
+      setFollowedCommunities(prev => {
+        if (followed) {
+          // Mock name lookup
+          const names: Record<string, string> = {
+            'c1': '未来财经',
+            'c2': '极客前沿',
+            'c3': '元宇宙'
+          };
+          if (prev.find(c => c.id === id)) return prev;
+          return [...prev, { id, name: names[id] || '社区' }];
+        } else {
+          return prev.filter(c => c.id !== id);
+        }
+      });
+    };
+
+    window.addEventListener('communityFollowed', handleFollow);
+    return () => window.removeEventListener('communityFollowed', handleFollow);
+  }, [followedCommunities]); // Re-run when state changes to update UI
 
   const toggleMenu = (id: string) => {
     if (isCollapsed) return;
@@ -107,28 +129,35 @@ export function Sidebar({ isCollapsed, activeSection }: SidebarProps) {
   const isMenuExpanded = (id: string) => expandedMenus.includes(id);
 
   const handleNavigation = (id: string, isParent = false) => {
-    let path = '/';
+    let path = '/platform'; // Default to platform root
     const parts = id.split('-');
-    if (id === 'home') path = '/';
-    else if (id === 'memory') path = '/memory';
-    else if (parts.length === 2 && parts[0] !== 'tools') path = `/${parts[0]}/${parts[1]}`;
+    if (id === 'home') path = '/platform';
+    else if (id === 'memory') path = '/platform/memory';
+    else if (parts.length === 2 && parts[0] !== 'tools' && parts[0] !== 'community') path = `/platform/${parts[0]}/${parts[1]}`;
+    else if (id.startsWith('community-')) {
+      if (id === 'community-explore') path = '/platform/community/explore';
+      else if (id === 'community-main') path = '/platform/community/main';
+      else if (id === 'community-following') path = '/platform/community/following';
+      else if (id === 'community-create') path = '/platform/community/create';
+      else path = `/platform/community/explore`; // For now just go to explore, or detail if implemented
+    }
     else if (id.startsWith('tools-')) {
-      if (id === 'tools-favorites') path = '/tools/favorites';
-      else if (id === 'tools-productivity') path = '/tools/productivity';
-      else if (id === 'tools-productivity-meeting') path = '/tools/productivity/meeting-notes';
-      else if (id === 'tools-productivity-okr') path = '/tools/productivity/okr';
-      else if (id === 'tools-productivity-email') path = '/tools/productivity/email-polisher';
-      else if (parts[1] === 'text' && parts[2] === 'translator') path = '/tools/text/translator';
-      else if (parts[1] === 'analysis' && parts[2] === 'trend') path = '/tools/analysis/trend-analyzer';
-      else if (parts[1] === 'analysis' && parts[2] === 'chart') path = '/tools/analysis/chart-builder';
-      else if (id === 'tools-text') path = '/tools/text';
-      else if (id === 'tools-analysis') path = '/tools/analysis';
-      else path = `/tools/custom/${parts[1]}`;
-    } else if (id === 'knowledge') { path = '/knowledge/sources'; toggleMenu(id); }
-    else if (id === 'interaction') { path = '/interaction/chat'; toggleMenu(id); }
-    else if (id === 'community') { path = '/community/main'; toggleMenu(id); }
+      if (id === 'tools-favorites') path = '/platform/tools/favorites';
+      else if (id === 'tools-productivity') path = '/platform/tools/productivity';
+      else if (id === 'tools-productivity-meeting') path = '/platform/tools/productivity/meeting-notes';
+      else if (id === 'tools-productivity-okr') path = '/platform/tools/productivity/okr';
+      else if (id === 'tools-productivity-email') path = '/platform/tools/productivity/email-polisher';
+      else if (parts[1] === 'text' && parts[2] === 'translator') path = '/platform/tools/text/translator';
+      else if (parts[1] === 'analysis' && parts[2] === 'trend') path = '/platform/tools/analysis/trend-analyzer';
+      else if (parts[1] === 'analysis' && parts[2] === 'chart') path = '/platform/tools/analysis/chart-builder';
+      else if (id === 'tools-text') path = '/platform/tools/text';
+      else if (id === 'tools-analysis') path = '/platform/tools/analysis';
+      else path = `/platform/tools/custom/${parts[1]}`;
+    } else if (id === 'knowledge') { path = '/platform/knowledge/sources'; toggleMenu(id); }
+    else if (id === 'interaction') { path = '/platform/interaction/chat'; toggleMenu(id); }
+    else if (id === 'community') { path = '/platform/community/explore'; toggleMenu(id); }
     else if (id === 'tools') { toggleMenu(id); return; }
-    else { path = `/${id}`; if (isParent) toggleMenu(id); }
+    else { path = `/platform/${id}`; if (isParent) toggleMenu(id); }
     navigate(path);
   };
 
@@ -148,7 +177,7 @@ export function Sidebar({ isCollapsed, activeSection }: SidebarProps) {
           {!isCollapsed && (
             <div className="flex flex-col">
               <span className="font-bold text-gray-900 text-lg leading-tight tracking-tight">HoloAI</span>
-              <span className="text-[10px] uppercase tracking-wider font-semibold text-gray-400">Enterprise</span>
+              <span className="text-[10px] uppercase tracking-wider font-semibold text-gray-400">企业版</span>
             </div>
           )}
         </div>
@@ -204,34 +233,6 @@ export function Sidebar({ isCollapsed, activeSection }: SidebarProps) {
             </div>
           );
         })}
-      </div>
-      <div className={`p-4 border-t border-gray-100 dark:border-gray-800 flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} bg-gray-50/50 dark:bg-gray-900/50`}>
-        <div className="relative cursor-pointer group">
-          <div className="size-9 rounded-full bg-gradient-to-tr from-gray-700 to-gray-900 flex items-center justify-center text-white font-bold shadow-md ring-2 ring-white dark:ring-gray-700">
-            <User size={18} />
-          </div>
-          <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white dark:border-gray-900 rounded-full"></div>
-        </div>
-        {!isCollapsed && (
-          <div className="flex flex-col flex-1 min-w-0">
-            <span className="font-bold text-sm text-gray-900 dark:text-white truncate">Admin User</span>
-            <span className="text-xs text-gray-500 dark:text-gray-400 truncate">Pro Plan</span>
-          </div>
-        )}
-        {!isCollapsed && (
-          <div className="flex items-center gap-1">
-            <button
-              onClick={toggleTheme}
-              className="p-1.5 hover:bg-white dark:hover:bg-gray-800 hover:shadow-sm rounded-lg text-gray-400 hover:text-amber-500 dark:text-gray-400 dark:hover:text-amber-400 transition-all"
-              title={themeMode === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"}
-            >
-              {themeMode === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
-            </button>
-            <button className="p-1.5 hover:bg-white dark:hover:bg-gray-800 hover:shadow-sm rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-all">
-              <Settings size={15} />
-            </button>
-          </div>
-        )}
       </div>
     </aside>
   );

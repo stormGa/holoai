@@ -216,7 +216,7 @@ export const MemoryActionModal: React.FC<MemoryActionModalProps> = ({ isOpen, on
                                                 <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-slate-300 flex-wrap">
                                                     <Users size={14} className="text-gray-400" />
                                                     {memory.metadata.people.map(p => (
-                                                        <span key={p} className="bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 px-1.5 py-0.5 rounded text-xs">{p}</span>
+                                                        <span key={p.name} className="bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 px-1.5 py-0.5 rounded text-xs">{p.name}</span>
                                                     ))}
                                                 </div>
                                             </div>

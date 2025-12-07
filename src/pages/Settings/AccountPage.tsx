@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { User, Check } from 'lucide-react';
 
+import { useUser } from '../../context/UserContext.tsx';
+
 const AccountPage: React.FC = () => {
+    const { currentUser } = useUser();
     // subscribedPlan represents the user's actual subscription
     const [subscribedPlan] = useState<'free' | 'pro' | 'enterprise'>('free');
     // selectedPlan represents the plan currently highlighted/viewed in the UI
@@ -55,7 +58,7 @@ const AccountPage: React.FC = () => {
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">个人资料</h3>
                     <div className="flex items-start gap-6">
                         <div className="size-20 rounded-full bg-gradient-to-tr from-blue-500 to-purple-600 flex items-center justify-center text-white text-2xl font-bold shadow-md">
-                            H
+                            {currentUser?.avatar}
                         </div>
                         <div className="flex-1 space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -63,7 +66,7 @@ const AccountPage: React.FC = () => {
                                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">用户名</label>
                                     <input
                                         type="text"
-                                        defaultValue="HoloAI User"
+                                        defaultValue={currentUser?.name}
                                         className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-black dark:text-white focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
                                     />
                                 </div>
@@ -71,8 +74,9 @@ const AccountPage: React.FC = () => {
                                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">电子邮箱</label>
                                     <input
                                         type="email"
-                                        defaultValue="user@holoai.com"
-                                        className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-black dark:text-white focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
+                                        readOnly
+                                        defaultValue={currentUser?.email}
+                                        className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 text-gray-500 dark:text-gray-400 cursor-not-allowed outline-none transition-all"
                                     />
                                 </div>
                             </div>

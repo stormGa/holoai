@@ -125,8 +125,23 @@ export const CompactEventCard: React.FC<EventCardProps> = ({ event, onAction }) 
                             {event.type === 'video' && event.metadata.duration && (
                                 <span className="flex items-center gap-1"><Clock size={10} /> {event.metadata.duration}</span>
                             )}
-                            {event.type === 'video' && event.metadata.people && (
-                                <span className="flex items-center gap-1"><Users size={10} /> {event.metadata.people.length} 人</span>
+                            {event.type === 'video' && event.metadata.people && event.metadata.people.length > 0 && (
+                                <div className="flex items-center -space-x-1.5 ml-1">
+                                    {event.metadata.people.slice(0, 3).map((p, i) => (
+                                        <img
+                                            key={i}
+                                            src={p.avatar}
+                                            alt={p.name}
+                                            title={p.name}
+                                            className="w-4 h-4 rounded-full border border-white dark:border-slate-900 ring-1 ring-gray-100 dark:ring-slate-800 object-cover"
+                                        />
+                                    ))}
+                                    {event.metadata.people.length > 3 && (
+                                        <div className="w-4 h-4 rounded-full bg-gray-100 dark:bg-slate-800 border border-white dark:border-slate-900 flex items-center justify-center text-[8px] font-medium text-gray-500">
+                                            +{event.metadata.people.length - 3}
+                                        </div>
+                                    )}
+                                </div>
                             )}
                             {event.metadata.description && (
                                 <span className="ml-auto opacity-70 truncate max-w-[120px]">{event.metadata.description}</span>
