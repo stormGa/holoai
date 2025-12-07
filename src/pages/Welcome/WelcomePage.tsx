@@ -10,7 +10,7 @@ const WelcomePage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
-    const { login, register, isLoading: isAuthLoading } = useUser();
+    const { login, register, isLoading: isAuthLoading, currentUser } = useUser();
     // Local loading state just for button animation trigger from context, or use context's loading?
     // Using local wrapper to handle start/end callbacks
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -126,96 +126,128 @@ const WelcomePage = () => {
 
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
 
-                        <div className="mb-8 text-center">
-                            <h2 className="text-2xl font-bold mb-2">{isLogin ? '欢迎回来' : '创建账号'}</h2>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                                {isLogin ? '输入您的凭证以访问工作区。' : '开始您的免费企业试用。'}
-                            </p>
-                        </div>
+                        {currentUser ? (
+                            <div className="text-center space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <div className="size-20 mx-auto rounded-full bg-gradient-to-tr from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg shadow-blue-500/20">
+                                    {currentUser.avatar}
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+                                        欢迎回来, {currentUser.name}
+                                    </h3>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                                        系统已准备就绪
+                                    </p>
+                                </div>
 
-                        <form onSubmit={handleAuth} className="space-y-5">
-                            {error && (
-                                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center gap-2 text-red-500 text-sm animate-in fade-in slide-in-from-top-2">
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    {error}
-                                </div>
-                            )}
-                            {!isLogin && (
-                                <div className="space-y-1.5">
-                                    <label className="text-xs font-semibold text-gray-700 dark:text-gray-300 ml-1">姓名</label>
-                                    <div className="relative">
-                                        <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                                        <input
-                                            type="text"
-                                            value={username}
-                                            onChange={(e) => setUsername(e.target.value)}
-                                            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm"
-                                            placeholder="张三"
-                                            required
-                                        />
-                                    </div>
-                                </div>
-                            )}
-                            <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-gray-700 dark:text-gray-300 ml-1">电子邮箱</label>
-                                <div className="relative">
-                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                                    <input
-                                        type="email"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm"
-                                        placeholder="name@company.com"
-                                        required
-                                    />
-                                </div>
-                            </div>
-                            <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-gray-700 dark:text-gray-300 ml-1">密码</label>
-                                <div className="relative">
-                                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                                    <input
-                                        type="password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm"
-                                        placeholder="••••••••"
-                                        required
-                                    />
-                                </div>
-                            </div>
-
-                            <button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-                            >
-                                {isSubmitting ? (
-                                    <>
-                                        <div className="size-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></div>
-                                        <span className="opacity-80">处理中...</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        {isLogin ? '登录' : '立即开始'} <ArrowRight size={18} />
-                                    </>
-                                )}
-                            </button>
-                        </form>
-
-                        <div className="mt-6 text-center">
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                                {isLogin ? "还没有账号？" : "已有账号？"} {' '}
                                 <button
-                                    onClick={() => setIsLogin(!isLogin)}
-                                    className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                                    onClick={() => navigate('/platform')}
+                                    className="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
                                 >
-                                    {isLogin ? '免费注册' : '登录'}
+                                    进入全息工作台 <ArrowRight size={18} />
                                 </button>
-                            </p>
-                        </div>
+
+                                <button
+                                    onClick={() => navigate('/platform/settings/account')}
+                                    className="text-sm text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                >
+                                    管理账户
+                                </button>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="mb-8 text-center">
+                                    <h2 className="text-2xl font-bold mb-2">{isLogin ? '欢迎回来' : '创建账号'}</h2>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                                        {isLogin ? '输入您的凭证以访问工作区。' : '开始您的免费企业试用。'}
+                                    </p>
+                                </div>
+
+                                <form onSubmit={handleAuth} className="space-y-5">
+                                    {error && (
+                                        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center gap-2 text-red-500 text-sm animate-in fade-in slide-in-from-top-2">
+                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            {error}
+                                        </div>
+                                    )}
+                                    {!isLogin && (
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-semibold text-gray-700 dark:text-gray-300 ml-1">姓名</label>
+                                            <div className="relative">
+                                                <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                                                <input
+                                                    type="text"
+                                                    value={username}
+                                                    onChange={(e) => setUsername(e.target.value)}
+                                                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm"
+                                                    placeholder="张三"
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-semibold text-gray-700 dark:text-gray-300 ml-1">电子邮箱</label>
+                                        <div className="relative">
+                                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                                            <input
+                                                type="email"
+                                                value={email}
+                                                onChange={(e) => setEmail(e.target.value)}
+                                                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm"
+                                                placeholder="name@company.com"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-semibold text-gray-700 dark:text-gray-300 ml-1">密码</label>
+                                        <div className="relative">
+                                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                                            <input
+                                                type="password"
+                                                value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm"
+                                                placeholder="••••••••"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        disabled={isSubmitting}
+                                        className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                                    >
+                                        {isSubmitting ? (
+                                            <>
+                                                <div className="size-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></div>
+                                                <span className="opacity-80">处理中...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                {isLogin ? '登录' : '立即开始'} <ArrowRight size={18} />
+                                            </>
+                                        )}
+                                    </button>
+                                </form>
+
+                                <div className="mt-6 text-center">
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                                        {isLogin ? "还没有账号？" : "已有账号？"} {' '}
+                                        <button
+                                            onClick={() => setIsLogin(!isLogin)}
+                                            className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                                        >
+                                            {isLogin ? '免费注册' : '登录'}
+                                        </button>
+                                    </p>
+                                </div>
+                            </>
+                        )}
 
                         <div className="mt-8 pt-6 border-t border-gray-100 dark:border-slate-800 flex justify-center gap-4 text-gray-400">
                             <div className="flex items-center gap-1.5 text-xs">
